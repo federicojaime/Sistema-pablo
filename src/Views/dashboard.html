@@ -1,0 +1,1408 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <base href="/sistema-pablo/public/">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Sistema Municipal San Francisco</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: #f8fafc;
+            color: #2d3748;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            height: 70px;
+            display: flex;
+            align-items: center;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.3em;
+            font-weight: 600;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .notification-btn {
+            position: relative;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .notification-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #e74c3c;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .user-menu {
+            position: relative;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .user-avatar:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 70px;
+            height: calc(100vh - 70px);
+            width: 280px;
+            background: white;
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+            z-index: 900;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-content {
+            padding: 20px;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        .nav-section {
+            margin-bottom: 30px;
+        }
+
+        .nav-title {
+            font-size: 12px;
+            text-transform: uppercase;
+            font-weight: 600;
+            color: #a0aec0;
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 4px;
+            color: #4a5568;
+            text-decoration: none;
+        }
+
+        .nav-item:hover {
+            background: #edf2f7;
+            color: #2d3748;
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .nav-item i {
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 280px;
+            margin-top: 70px;
+            padding: 30px;
+            min-height: calc(100vh - 70px);
+        }
+
+        .page-header {
+            margin-bottom: 30px;
+        }
+
+        .page-title {
+            font-size: 2em;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+
+        .page-subtitle {
+            color: #718096;
+            font-size: 1.1em;
+        }
+
+        /* Dashboard Cards */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .stat-title {
+            font-size: 14px;
+            color: #718096;
+            font-weight: 500;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+        }
+
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+
+        .stat-change {
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .stat-change.positive {
+            color: #38a169;
+        }
+
+        .stat-change.negative {
+            color: #e53e3e;
+        }
+
+        /* Board Grid */
+        .boards-section {
+            margin-bottom: 40px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 1.5em;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .boards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .board-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .board-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        .board-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .board-color {
+            width: 12px;
+            height: 40px;
+            border-radius: 6px;
+            margin-right: 16px;
+        }
+
+        .board-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+
+        .board-description {
+            color: #718096;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .board-stats {
+            display: flex;
+            gap: 20px;
+            font-size: 13px;
+            color: #a0aec0;
+        }
+
+        .board-stat {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Recent Activity */
+        .activity-section {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e2e8f0;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-text {
+            color: #4a5568;
+            margin-bottom: 4px;
+        }
+
+        .activity-time {
+            font-size: 12px;
+            color: #a0aec0;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 40px;
+        }
+
+        .quick-action {
+            background: white;
+            border: 2px dashed #e2e8f0;
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #718096;
+        }
+
+        .quick-action:hover {
+            border-color: #667eea;
+            background: #f7fafc;
+        }
+
+        .quick-action i {
+            font-size: 2em;
+            margin-bottom: 12px;
+            color: #a0aec0;
+        }
+
+        /* Modals */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .modal-title {
+            font-size: 1.5em;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #a0aec0;
+            padding: 4px;
+        }
+
+        .close-modal:hover {
+            color: #2d3748;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        select.form-control {
+            cursor: pointer;
+        }
+
+        /* Alerts */
+        .alert {
+            padding: 16px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .alert-success {
+            background: #f0fff4;
+            color: #22543d;
+            border: 1px solid #9ae6b4;
+        }
+
+        .alert-error {
+            background: #fed7d7;
+            color: #742a2a;
+            border: 1px solid #feb2b2;
+        }
+
+        .alert-info {
+            background: #ebf8ff;
+            color: #2a4365;
+            border: 1px solid #90cdf4;
+        }
+
+        /* Loading States */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(102, 126, 234, 0.3);
+            border-radius: 50%;
+            border-top-color: #667eea;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .header-content {
+                padding: 0 15px;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .boards-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-actions {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Kanban Board Styles */
+        .kanban-board {
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            padding-bottom: 20px;
+            min-height: 600px;
+        }
+
+        .kanban-column {
+            min-width: 300px;
+            background: #f7fafc;
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .column-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .column-title {
+            font-weight: 600;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .column-count {
+            background: #e2e8f0;
+            color: #4a5568;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .task-list {
+            min-height: 400px;
+        }
+
+        .task-card {
+            background: white;
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .task-card:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .task-title {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .task-description {
+            color: #718096;
+            font-size: 13px;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .task-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+        }
+
+        .task-priority {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .priority-low {
+            background: #f0fff4;
+            color: #22543d;
+        }
+
+        .priority-medium {
+            background: #fffaf0;
+            color: #744210;
+        }
+
+        .priority-high {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .priority-urgent {
+            background: #e53e3e;
+            color: white;
+        }
+
+        .task-assignee {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        /* Floating Action Button */
+        .fab {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            box-shadow: 0 8px 32px rgba(102, 126, 234, 0.4);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .fab:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(102, 126, 234, 0.5);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <i class="fas fa-city"></i>
+                <span>Sistema Municipal San Francisco</span>
+            </div>
+            <div class="header-actions">
+                <button class="notification-btn" onclick="showNotifications()">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge" id="notificationCount">0</span>
+                </button>
+                <div class="user-menu">
+                    <div class="user-avatar" onclick="toggleUserMenu()">
+                        <i class="fas fa-user"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-content">
+            <div class="nav-section">
+                <div class="nav-title">Principal</div>
+                <a href="#" class="nav-item active" onclick="showPage('dashboard')">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-item" onclick="showPage('boards')">
+                    <i class="fas fa-columns"></i>
+                    <span>Tableros</span>
+                </a>
+                <a href="#" class="nav-item" onclick="showPage('tasks')">
+                    <i class="fas fa-tasks"></i>
+                    <span>Mis Tareas</span>
+                </a>
+                <a href="#" class="nav-item" onclick="showPage('messages')">
+                    <i class="fas fa-comments"></i>
+                    <span>Mensajes</span>
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-title">Gestión</div>
+                <a href="#" class="nav-item" onclick="showPage('citizen-requests')">
+                    <i class="fas fa-inbox"></i>
+                    <span>Solicitudes Ciudadanas</span>
+                </a>
+                <a href="#" class="nav-item" onclick="showPage('users')">
+                    <i class="fas fa-users"></i>
+                    <span>Usuarios</span>
+                </a>
+                <a href="#" class="nav-item" onclick="showPage('reports')">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Reportes</span>
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-title">Sistema</div>
+                <a href="#" class="nav-item" onclick="showPage('settings')">
+                    <i class="fas fa-cog"></i>
+                    <span>Configuración</span>
+                </a>
+                <a href="#" class="nav-item" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Cerrar Sesión</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Dashboard Page -->
+        <div id="page-dashboard" class="page">
+            <div class="page-header">
+                <h1 class="page-title">Dashboard</h1>
+                <p class="page-subtitle">Panel de control y resumen de actividades</p>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <div class="quick-action" onclick="openModal('newBoardModal')">
+                    <i class="fas fa-plus"></i>
+                    <div>Nuevo Tablero</div>
+                </div>
+                <div class="quick-action" onclick="openModal('newTaskModal')">
+                    <i class="fas fa-tasks"></i>
+                    <div>Nueva Tarea</div>
+                </div>
+                <div class="quick-action" onclick="showPage('citizen-requests')">
+                    <i class="fas fa-inbox"></i>
+                    <div>Ver Solicitudes</div>
+                </div>
+                <div class="quick-action" onclick="showPage('messages')">
+                    <i class="fas fa-paper-plane"></i>
+                    <div>Enviar Mensaje</div>
+                </div>
+            </div>
+
+            <!-- Statistics -->
+            <div class="dashboard-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Tareas Pendientes</div>
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #e74c3c, #c0392b);">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value" id="pendingTasks">0</div>
+                    <div class="stat-change positive">
+                        <i class="fas fa-arrow-up"></i>
+                        +12% esta semana
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Tareas Completadas</div>
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #27ae60, #229954);">
+                            <i class="fas fa-check"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value" id="completedTasks">0</div>
+                    <div class="stat-change positive">
+                        <i class="fas fa-arrow-up"></i>
+                        +8% esta semana
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Solicitudes Ciudadanas</div>
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #3498db, #2980b9);">
+                            <i class="fas fa-inbox"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value" id="citizenRequests">0</div>
+                    <div class="stat-change negative">
+                        <i class="fas fa-arrow-down"></i>
+                        -3% esta semana
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Usuarios Activos</div>
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #9b59b6, #8e44ad);">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value" id="activeUsers">0</div>
+                    <div class="stat-change positive">
+                        <i class="fas fa-arrow-up"></i>
+                        +5% esta semana
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Boards -->
+            <div class="boards-section">
+                <div class="section-header">
+                    <h2 class="section-title">Tableros Recientes</h2>
+                    <a href="#" class="btn btn-primary" onclick="showPage('boards')">
+                        <i class="fas fa-columns"></i>
+                        Ver Todos
+                    </a>
+                </div>
+                <div class="boards-grid" id="recentBoards">
+                    <!-- Boards will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="activity-section">
+                <h2 class="section-title">Actividad Reciente</h2>
+                <div id="recentActivity">
+                    <!-- Activity items will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Boards Page -->
+        <div id="page-boards" class="page" style="display: none;">
+            <div class="page-header">
+                <h1 class="page-title">Tableros</h1>
+                <p class="page-subtitle">Gestiona todos los tableros del sistema</p>
+            </div>
+            <div class="boards-grid" id="allBoards">
+                <!-- All boards will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Board Detail Page -->
+        <div id="page-board-detail" class="page" style="display: none;">
+            <div class="page-header">
+                <h1 class="page-title" id="boardTitle">Tablero</h1>
+                <p class="page-subtitle" id="boardDescription">Descripción del tablero</p>
+            </div>
+            <div class="kanban-board" id="kanbanBoard">
+                <!-- Kanban columns will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Other pages will be similar... -->
+    </main>
+
+    <!-- Floating Action Button -->
+    <button class="fab" onclick="openQuickActions()">
+        <i class="fas fa-plus"></i>
+    </button>
+
+    <!-- Modals -->
+    <div id="newBoardModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Nuevo Tablero</h3>
+                <button class="close-modal" onclick="closeModal('newBoardModal')">&times;</button>
+            </div>
+            <form id="newBoardForm">
+                <div class="form-group">
+                    <label class="form-label">Título *</label>
+                    <input type="text" class="form-control" name="title" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Descripción</label>
+                    <textarea class="form-control" name="description"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Color</label>
+                    <input type="color" class="form-control" name="color" value="#3498db">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">
+                        <input type="checkbox" name="is_public"> Tablero público
+                    </label>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i>
+                    Crear Tablero
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentUser = null;
+        let authToken = null;
+        let currentPage = 'dashboard';
+        let currentBoard = null;
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function () {
+            initializeApp();
+        });
+
+        async function initializeApp() {
+            // Check authentication
+            authToken = localStorage.getItem('authToken');
+            const userStr = localStorage.getItem('currentUser');
+
+            if (!authToken || !userStr) {
+                window.location.href = '/login';
+                return;
+            }
+
+            currentUser = JSON.parse(userStr);
+
+            // Load initial data
+            await loadDashboardData();
+            await loadNotifications();
+
+            // Setup periodic updates
+            setInterval(loadNotifications, 30000); // Check notifications every 30 seconds
+        }
+
+        // API helper functions
+        async function apiCall(endpoint, options = {}) {
+            const config = {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`
+                },
+                ...options
+            };
+
+            try {
+                const response = await fetch(`/api${endpoint}`, config);
+                const data = await response.json();
+
+                if (response.status === 401) {
+                    logout();
+                    return null;
+                }
+
+                return data;
+            } catch (error) {
+                console.error('API Error:', error);
+                showAlert('Error de conexión', 'error');
+                return null;
+            }
+        }
+
+        // Dashboard functions
+        async function loadDashboardData() {
+            showLoading();
+
+            try {
+                // Load stats
+                const stats = await apiCall('/tasks?stats=true');
+                if (stats && !stats.error) {
+                    document.getElementById('pendingTasks').textContent = stats.data.pending || 0;
+                    document.getElementById('completedTasks').textContent = stats.data.completed || 0;
+                }
+
+                const citizenStats = await apiCall('/admin/citizen-requests?stats=true');
+                if (citizenStats && !citizenStats.error) {
+                    document.getElementById('citizenRequests').textContent = citizenStats.data.total || 0;
+                }
+
+                const userStats = await apiCall('/users?stats=true');
+                if (userStats && !userStats.error) {
+                    document.getElementById('activeUsers').textContent = userStats.data.active || 0;
+                }
+
+                // Load recent boards
+                await loadRecentBoards();
+
+                // Load recent activity
+                await loadRecentActivity();
+
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function loadRecentBoards() {
+            const boards = await apiCall('/boards?limit=6');
+            if (boards && !boards.error) {
+                const container = document.getElementById('recentBoards');
+                container.innerHTML = '';
+
+                boards.data.forEach(board => {
+                    const boardCard = createBoardCard(board);
+                    container.appendChild(boardCard);
+                });
+            }
+        }
+
+        function createBoardCard(board) {
+            const card = document.createElement('div');
+            card.className = 'board-card';
+            card.onclick = () => openBoard(board.id);
+
+            card.innerHTML = `
+                <div class="board-header">
+                    <div>
+                        <div class="board-color" style="background: ${board.color || '#3498db'};"></div>
+                        <div class="board-title">${board.title}</div>
+                    </div>
+                </div>
+                <div class="board-description">${board.description || 'Sin descripción'}</div>
+                <div class="board-stats">
+                    <div class="board-stat">
+                        <i class="fas fa-tasks"></i>
+                        ${board.tasks_count || 0} tareas
+                    </div>
+                    <div class="board-stat">
+                        <i class="fas fa-users"></i>
+                        ${board.members_count || 0} miembros
+                    </div>
+                </div>
+            `;
+
+            return card;
+        }
+
+        async function loadRecentActivity() {
+            // This would load from activity logs
+            const container = document.getElementById('recentActivity');
+            container.innerHTML = `
+                <div class="activity-item">
+                    <div class="activity-avatar">JS</div>
+                    <div class="activity-content">
+                        <div class="activity-text">Juan Silva creó una nueva tarea en "Gestión Municipal"</div>
+                        <div class="activity-time">Hace 5 minutos</div>
+                    </div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-avatar">MR</div>
+                    <div class="activity-content">
+                        <div class="activity-text">María Rodríguez completó "Revisión de expedientes"</div>
+                        <div class="activity-time">Hace 15 minutos</div>
+                    </div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-avatar">CP</div>
+                    <div class="activity-content">
+                        <div class="activity-text">Carlos Pérez agregó un comentario</div>
+                        <div class="activity-time">Hace 1 hora</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Navigation functions
+        function showPage(pageName) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.style.display = 'none';
+            });
+
+            // Remove active class from nav items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            // Show selected page
+            const page = document.getElementById(`page-${pageName}`);
+            if (page) {
+                page.style.display = 'block';
+                currentPage = pageName;
+
+                // Add active class to nav item
+                const navItem = document.querySelector(`[onclick="showPage('${pageName}')"]`);
+                if (navItem) {
+                    navItem.classList.add('active');
+                }
+
+                // Load page data
+                loadPageData(pageName);
+            }
+        }
+
+        async function loadPageData(pageName) {
+            switch (pageName) {
+                case 'dashboard':
+                    await loadDashboardData();
+                    break;
+                case 'boards':
+                    await loadAllBoards();
+                    break;
+                case 'tasks':
+                    await loadMyTasks();
+                    break;
+                // Add other cases as needed
+            }
+        }
+
+        async function loadAllBoards() {
+            const boards = await apiCall('/boards');
+            if (boards && !boards.error) {
+                const container = document.getElementById('allBoards');
+                container.innerHTML = '';
+
+                boards.data.forEach(board => {
+                    const boardCard = createBoardCard(board);
+                    container.appendChild(boardCard);
+                });
+            }
+        }
+
+        async function openBoard(boardId) {
+            const board = await apiCall(`/boards/${boardId}`);
+            if (board && !board.error) {
+                currentBoard = board.data;
+                document.getElementById('boardTitle').textContent = board.data.title;
+                document.getElementById('boardDescription').textContent = board.data.description || '';
+
+                await loadKanbanBoard(board.data);
+                showPage('board-detail');
+            }
+        }
+
+        async function loadKanbanBoard(board) {
+            const container = document.getElementById('kanbanBoard');
+            container.innerHTML = '';
+
+            if (board.columns) {
+                board.columns.forEach(column => {
+                    const columnElement = createKanbanColumn(column);
+                    container.appendChild(columnElement);
+                });
+            }
+        }
+
+        function createKanbanColumn(column) {
+            const columnDiv = document.createElement('div');
+            columnDiv.className = 'kanban-column';
+            columnDiv.innerHTML = `
+                <div class="column-header">
+                    <div class="column-title">
+                        ${column.title}
+                        <span class="column-count">${column.tasks ? column.tasks.length : 0}</span>
+                    </div>
+                </div>
+                <div class="task-list" id="column-${column.id}">
+                    ${column.tasks ? column.tasks.map(task => createTaskCard(task)).join('') : ''}
+                </div>
+            `;
+            return columnDiv;
+        }
+
+        function createTaskCard(task) {
+            const priorityClass = `priority-${task.priority}`;
+            const assigneeInitials = task.assigned_user ?
+                task.assigned_user.full_name.split(' ').map(n => n[0]).join('') : '';
+
+            return `
+                <div class="task-card" onclick="openTask(${task.id})">
+                    <div class="task-title">${task.title}</div>
+                    <div class="task-description">${task.description || ''}</div>
+                    <div class="task-meta">
+                        <span class="task-priority ${priorityClass}">${task.priority}</span>
+                        ${assigneeInitials ? `<div class="task-assignee">${assigneeInitials}</div>` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Modal functions
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Form handlers
+        document.getElementById('newBoardForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const formData = new FormData(e.target);
+            const boardData = {
+                title: formData.get('title'),
+                description: formData.get('description'),
+                color: formData.get('color'),
+                is_public: formData.get('is_public') ? true : false
+            };
+
+            const result = await apiCall('/boards', {
+                method: 'POST',
+                body: JSON.stringify(boardData)
+            });
+
+            if (result && !result.error) {
+                showAlert('Tablero creado exitosamente', 'success');
+                closeModal('newBoardModal');
+                e.target.reset();
+                await loadRecentBoards();
+            } else {
+                showAlert(result ? result.message : 'Error al crear tablero', 'error');
+            }
+        });
+
+        // Notifications
+        async function loadNotifications() {
+            const notifications = await apiCall('/notifications?limit=5');
+            if (notifications && !notifications.error) {
+                const unreadCount = notifications.data.filter(n => !n.is_read).length;
+                document.getElementById('notificationCount').textContent = unreadCount;
+            }
+        }
+
+        function showNotifications() {
+            // Implementation for showing notifications panel
+            console.log('Show notifications panel');
+        }
+
+        // Utility functions
+        function showLoading() {
+            // Implementation for loading indicator
+        }
+
+        function hideLoading() {
+            // Implementation for hiding loading indicator
+        }
+
+        function showAlert(message, type) {
+            // Create and show alert
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-triangle'}"></i>
+                ${message}
+            `;
+
+            document.body.appendChild(alert);
+            alert.style.position = 'fixed';
+            alert.style.top = '90px';
+            alert.style.right = '20px';
+            alert.style.zIndex = '3000';
+
+            setTimeout(() => {
+                if (alert.parentNode) {
+                    alert.parentNode.removeChild(alert);
+                }
+            }, 5000);
+        }
+
+        function logout() {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('currentUser');
+            window.location.href = '/login';
+        }
+
+        function toggleUserMenu() {
+            // Implementation for user menu dropdown
+            console.log('Toggle user menu');
+        }
+
+        function openQuickActions() {
+            // Implementation for quick actions menu
+            console.log('Open quick actions');
+        }
+
+        async function openTask(taskId) {
+            // Implementation for opening task details
+            console.log('Open task:', taskId);
+        }
+
+        // Close modals when clicking outside
+        window.onclick = function (event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+
+</html>
